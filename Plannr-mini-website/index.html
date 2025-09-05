@@ -14,20 +14,21 @@
 <body>
     <h1 class="bricolage-grotesque-normal">MiLife Plannr App</h1>
     <h3 class="bricolage-grotesque-normal">Redirecting to the app...</h2>
-    <h3 class="bricolage-grotesque-normal">Please wait!</h2>
-    <script>
-        // Parse query params
-        const params = new URLSearchParams(window.location.search);
-        const accessToken = params.get('access_token');
-        const refreshToken = params.get('refresh_token');
+        <h3 class="bricolage-grotesque-normal">Please wait!</h2>
+            <script>
+                const hash = window.location.hash.substring(1);
+                const params = new URLSearchParams(hash);
 
-        if (accessToken && refreshToken) {
-            // Redirect to the mobile app
-            window.location.href = `milife-plannr://auth/callback?access_token=${accessToken}&refresh_token=${refreshToken}`;
-        } else {
-            document.body.innerHTML = "<p>Invalid confirmation link.</p>";
-        }
-    </script>
+                const accessToken = params.get('access_token');
+                const refreshToken = params.get('refresh_token');
+
+                if (accessToken && refreshToken) {
+                    window.location.href = `milife-plannr://auth/callback?access_token=${accessToken}&refresh_token=${refreshToken}`;
+                } else {
+                    document.body.innerHTML = "<p>Invalid confirmation link.</p>";
+                }
+
+            </script>
 </body>
 
 </html>
