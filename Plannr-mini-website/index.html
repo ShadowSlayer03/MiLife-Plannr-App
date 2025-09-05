@@ -19,10 +19,11 @@
         // Parse query params
         const params = new URLSearchParams(window.location.search);
         const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
 
-        if (accessToken) {
+        if (accessToken && refreshToken) {
             // Redirect to the mobile app
-            window.location.href = `milife-plannr://auth/callback?access_token=${accessToken}`;
+            window.location.href = `milife-plannr://auth/callback?access_token=${accessToken}&refresh_token=${refreshToken}`;
         } else {
             document.body.innerHTML = "<p>Invalid confirmation link.</p>";
         }
