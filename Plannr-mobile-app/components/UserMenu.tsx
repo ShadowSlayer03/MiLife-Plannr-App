@@ -42,7 +42,7 @@ export default function UserMenu({ user }: UserMenuProps) {
         text2: error.message || "Error: User signout failed",
         text1Style: { color: "red" },
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -53,12 +53,12 @@ export default function UserMenu({ user }: UserMenuProps) {
       text2: "User signed out successfully",
       text1Style: { color: "green" },
       position: "top",
-      visibilityTime: 2000,
+      visibilityTime: 1500,
     });
 
     setTimeout(() => {
       router.replace("/login");
-    }, 2000);
+    }, 1500);
   };
 
   return (

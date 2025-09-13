@@ -58,12 +58,12 @@ const GeneratedList = () => {
         text1: "One or more lists could not be found",
         text2: "Redirecting to budget page...",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
 
       setTimeout(() => {
         router.replace("/budget-setup/75BV")
-      }, 2000)
+      }, 1500)
     }
 
   }

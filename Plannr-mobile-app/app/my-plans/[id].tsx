@@ -11,6 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import formatDate from "@/utils/formatDate";
 import { Plan } from "@/types/Plan";
 import { fetchPlan } from "@/lib/queries";
+import BackButton from "@/components/BackButton";
+import ExportButton from "@/components/ExportButton";
 
 const PlanDetail = () => {
   const { id } = useLocalSearchParams();
@@ -23,7 +25,7 @@ const PlanDetail = () => {
   } = useQuery<Plan | null, Error>({
     queryKey: ["plan", id],
     queryFn: () => fetchPlan(id as string),
-    enabled: !!id, 
+    enabled: !!id,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -53,9 +55,10 @@ const PlanDetail = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-100 p-6">
+      <BackButton xPos="left-0" yPos="-top-4" />
       {/* Header Card */}
-      <View className="bg-mi-purple rounded-2xl shadow-lg p-5 mb-6">
-        <Text className="text-2xl font-kanit-bold text-white mb-2">
+      <View className="bg-mi-purple rounded-2xl shadow-lg p-5 mt-8">
+        <Text className="text-2xl font-bricolage-bold text-white mb-2">
           {plan.name}
         </Text>
         <View className="flex-row justify-between mb-1">
@@ -77,6 +80,8 @@ const PlanDetail = () => {
           </Text>
         </View>
       </View>
+
+      <ExportButton plan={plan} />
 
       {/* Products */}
       <Text className="text-xl font-bricolage-semibold mb-3 text-gray-800">

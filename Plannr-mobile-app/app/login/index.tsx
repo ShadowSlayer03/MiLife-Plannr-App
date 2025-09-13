@@ -23,7 +23,7 @@ function Login() {
         type: "error",
         text1: error.message,
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
     }
 
@@ -33,11 +33,11 @@ function Login() {
         type: "success",
         text1: "User logged in successfully!",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       setTimeout(() => {
         router.push("/budget-setup/instructions");
-      }, 2000);
+      }, 1500);
     }
   };
 

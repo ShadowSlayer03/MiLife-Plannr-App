@@ -51,7 +51,7 @@ export default function Home() {
         type: "error",
         text1: "Budget exceeded!",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -115,7 +115,7 @@ export default function Home() {
         text2: error.message || "Error: User signout failed",
         text1Style: { color: "red" },
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -126,12 +126,12 @@ export default function Home() {
       text2: "User signed out successfully",
       text1Style: { color: "green" },
       position: "top",
-      visibilityTime: 2000,
+      visibilityTime: 1500,
     });
 
     setTimeout(() => {
       router.replace("/login");
-    }, 2000)
+    }, 1500)
   }
 
   return (

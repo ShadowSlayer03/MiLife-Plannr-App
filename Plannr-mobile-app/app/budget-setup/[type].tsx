@@ -30,7 +30,7 @@ export default function BudgetSetup() {
         text1: "Budget not set",
         text1Style: { color: "red" },
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }

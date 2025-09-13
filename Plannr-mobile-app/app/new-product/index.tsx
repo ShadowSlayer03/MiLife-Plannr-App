@@ -41,7 +41,7 @@ const NewProduct = () => {
         text1: "Validation",
         text2: "Please fill all fields.",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -53,7 +53,7 @@ const NewProduct = () => {
         text1: "Validation",
         text2: "Please enter a valid price.",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -72,7 +72,7 @@ const NewProduct = () => {
         text1: "Error",
         text2: error.message,
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
     } else {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -82,12 +82,12 @@ const NewProduct = () => {
         text1: "Success",
         text2: "Product added successfully!",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
 
       setTimeout(() => {
         router.back();
-      }, 2000);
+      }, 1500);
     }
   };
 

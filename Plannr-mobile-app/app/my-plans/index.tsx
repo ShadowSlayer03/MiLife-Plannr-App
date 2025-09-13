@@ -47,7 +47,7 @@ const MyPlans = () => {
       text1: "Error",
       text2: error.message,
       position: "bottom",
-      visibilityTime: 2000,
+      visibilityTime: 1500,
     });
   }
 

@@ -15,15 +15,15 @@ export default ({ config }) => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/images/adaptive-icon.png",
-      backgroundColor: "#ffffff",
+      foregroundImage: "./assets/images/icon.png",
+      backgroundColor: "#4c2889",
     },
     edgeToEdgeEnabled: true,
   },
   web: {
     bundler: "metro",
     output: "static",
-    favicon: "./assets/images/favicon.png",
+    favicon: "./assets/images/icon.png",
   },
   assetBundlePatterns: ["**/*"],
   plugins: [
@@ -31,10 +31,9 @@ export default ({ config }) => ({
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/splash-icon.png",
-        imageWidth: 200,
-        resizeMode: "contain",
-        backgroundColor: "#ffffff",
+        image: "./assets/images/splash.png",
+        resizeMode: "cover",
+        backgroundColor: "#4c2889",
       },
     ],
     "expo-font",
@@ -47,5 +46,8 @@ export default ({ config }) => ({
   extra: {
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseKey: process.env.SUPABASE_KEY,
+    "eas": {
+      "projectId": "210c5d68-2170-4198-b5b8-e3e2d59f092b"
+    }
   },
 });

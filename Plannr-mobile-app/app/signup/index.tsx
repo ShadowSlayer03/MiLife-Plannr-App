@@ -65,7 +65,7 @@ export default function SignUp() {
         text1: "Error",
         text2: "All fields are required!",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -76,7 +76,7 @@ export default function SignUp() {
         text1: "Error",
         text2: "All fields are required!",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       return;
     }
@@ -103,18 +103,18 @@ export default function SignUp() {
         text1: "Success",
         text2: "Redirecting to login...",
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
       setTimeout(() => {
         router.push("/login");
-      }, 2000)
+      }, 1500)
     } catch (error: any) {
       Toast.show({
         type: "error",
         text1: "Error",
         text2: error.message,
         position: "top",
-        visibilityTime: 2000,
+        visibilityTime: 1500,
       });
     } finally {
       setLoading(false);
