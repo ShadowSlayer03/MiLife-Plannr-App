@@ -14,6 +14,7 @@ export default ({ config }) => ({
     supportsTablet: true,
   },
   android: {
+    package: "com.milife.plannr",
     adaptiveIcon: {
       foregroundImage: "./assets/images/icon.png",
       backgroundColor: "#4c2889",
