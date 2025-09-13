@@ -3,7 +3,7 @@ import 'dotenv/config';
 export default ({ config }) => ({
   ...config,
   name: "MiLife-Purchase-Planner",
-  slug: "MiLife-Purchase-Planner",
+  slug: "mi-plannr-app",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
@@ -20,6 +20,10 @@ export default ({ config }) => ({
       backgroundColor: "#4c2889",
     },
     edgeToEdgeEnabled: true,
+  },
+  ios: {
+    bundleIdentifier: "com.milife.plannr",
+    supportsTablet: true,
   },
   web: {
     bundler: "metro",
