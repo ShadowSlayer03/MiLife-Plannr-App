@@ -48,7 +48,7 @@ export default ({ config }) => ({
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseKey: process.env.SUPABASE_KEY,
     "eas": {
-      "projectId": "210c5d68-2170-4198-b5b8-e3e2d59f092b"
+      "projectId": "43381654-4a86-4b4b-9260-dd9216094fc3"
     }
   },
 });
