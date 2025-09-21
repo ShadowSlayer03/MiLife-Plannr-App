@@ -93,7 +93,7 @@ function Login() {
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text className="text-white font-bricolage-semibold text-[16px]">Login</Text>
+          <Text className="text-white font-bricolage-semibold text-[16px] leading-4">Login</Text>
         )}
       </TouchableOpacity>
 
@@ -103,7 +103,7 @@ function Login() {
         className="bg-gray-100 py-3 rounded-full items-center shadow-md"
         disabled={loading}
       >
-        <Text className="text-gray-800 font-bricolage-semibold text-[16px]">Signup</Text>
+        <Text className="text-gray-800 font-bricolage-semibold text-[16px] leading-4">Signup</Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,6 +1,6 @@
-import React from "react";
-import { SafeAreaView, View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import React from "react";
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Instructions() {
     const router = useRouter();
@@ -8,7 +8,7 @@ export default function Instructions() {
     return (
         <SafeAreaView className="flex-1 bg-gray-100 px-6">
             <ScrollView className="py-[20%]">
-                <Text className="text-3xl font-bricolage-bold text-mi-purple text-center mb-14">
+                <Text className="text-3xl font-bricolage-bold text-mi-purple text-center mb-10">
                     How to use Mi Plannr
                 </Text>
 
@@ -50,7 +50,7 @@ export default function Instructions() {
 
                 <TouchableOpacity
                     onPress={() => router.push(`/budget-setup/75BV`)}
-                    className="bg-mi-purple py-4 rounded-full items-center shadow-lg mt-6"
+                    className="bg-mi-purple py-2 rounded-full items-center shadow-lg"
                 >
                     <Text className="text-white font-bricolage-semibold text-lg">Set My Budget</Text>
                 </TouchableOpacity>

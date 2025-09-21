@@ -61,15 +61,21 @@ const ExportButton: React.FC<ExportButtonProps> = ({ plan }) => {
 
         const excelBinary = XLSX.write(workbook, { type: "base64", bookType: "xlsx" });
 
+        const timestamp = new Date()
+            .toISOString()
+            .replace(/[-:T.]/g, "")
+            .slice(0, 14);
+        const fileName = `MiPlannr-${timestamp}.xlsx`;
+
         if (Platform.OS === "web") {
             const { saveAs } = await import("file-saver");
             const blob = new Blob(
                 [XLSX.write(workbook, { bookType: "xlsx", type: "array" })],
                 { type: "application/octet-stream" }
             );
-            saveAs(blob, "MiPlannr-Report.xlsx");
+            saveAs(blob, fileName);
         } else {
-            const fileUri = FileSystem.cacheDirectory + "MiPlannr-Report.xlsx";
+            const fileUri = FileSystem.cacheDirectory + fileName;
             await FileSystem.writeAsStringAsync(fileUri, excelBinary, {
                 encoding: FileSystem.EncodingType.Base64,
             });

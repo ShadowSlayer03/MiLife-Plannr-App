@@ -1,7 +1,6 @@
-
-import generateList from "@/utils/generateList";
 import { brands35BV, brands75BV } from "@/constants/Brands";
 import { Product } from "@/types/Product";
+import generateList from "@/utils/generateList";
 import { Dispatch, SetStateAction } from "react";
 
 interface CreateListParams {
