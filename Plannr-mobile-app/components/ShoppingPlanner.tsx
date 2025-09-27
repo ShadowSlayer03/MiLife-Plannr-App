@@ -1,13 +1,13 @@
-import React from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { useGeneratedList } from "@/hooks/useGeneratedList";
+import { fetchProducts } from "@/lib/queries";
+import { Product } from "@/types/Product";
+import { createAndStoreList } from "@/utils/createAndStoreList";
 import { truncateText } from "@/utils/truncateText";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProducts } from "@/lib/queries";
-import Toast from "react-native-toast-message";
-import { useGeneratedList } from "@/hooks/useGeneratedList";
 import { useRouter } from "expo-router";
-import { createAndStoreList } from "@/utils/createAndStoreList";
-import { Product } from "@/types/Product";
+import React from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface ShoppingPlanner {
   selected: Product[];
@@ -25,7 +25,7 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
   const router = useRouter();
   const total = selected.reduce((acc, p) => acc + p.price * (p.quantity || 1), 0);
   const maxBudget = budget + adjustment;
-  const { setList75BV, setList35BV, setBudget, setAdjustment} = useGeneratedList();
+  const { setList75BV, setList35BV, setBudget, setAdjustment } = useGeneratedList();
   const setList = (type === "75BV") ? setList75BV : setList35BV;
 
   const {
@@ -119,7 +119,18 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
         </View>
         <TouchableOpacity
           className="bg-mi-purple py-2 px-2 mt-4 w-md rounded-xl shadow-md active:opacity-60"
-          onPress={handleGenerateListClick}>
+          onPress={() => {
+            router.push({
+              pathname: "/loading",
+              params: {
+                type: type,
+                bgt: String(budget),
+                adj: String(adjustment),
+                selected: JSON.stringify(selected),
+              },
+            });
+          }}
+        >
           <Text className="text-white text-center font-kanit font-semibold text-[15px]">
             Generate List
           </Text>

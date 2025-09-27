@@ -33,14 +33,14 @@ async function importProducts() {
     }));
 
     // 3. Bulk insert into Supabase table
-    const { data: inserted, error } = await supabase
-      .from("products") // <-- change to your actual table
-      .insert(rows);
+    const { data: upserted, error } = await supabase
+      .from("products")
+      .upsert(rows, { onConflict: "id" });
 
     if (error) {
       console.error("Supabase insert error:", error);
     } else {
-      console.log(`Inserted ${inserted?.length || 0} products successfully.`);
+      console.log(`Inserted ${upserted?.length || 0} products successfully.`);
     }
   } catch (err) {
     console.error("Import failed:", err.message);

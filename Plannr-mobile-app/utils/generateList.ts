@@ -5,6 +5,11 @@ interface WeightedProduct extends Product {
   imp: number;
 }
 
+interface DPState {
+  map: Map<string, number>;
+  importance: number;
+}
+
 /**
  * Optimized DP-based generateList
  */
@@ -16,12 +21,15 @@ const generateList = (
   type: "75BV" | "35BV"
 ): Product[] => {
   const totalAvailableBudget = budget + adjustment;
-  const currentSpent = selected.reduce((acc, s) => acc + s.price * (s.quantity || 1), 0);
+  const currentSpent = selected.reduce(
+    (acc, s) => acc + s.price * (s.quantity || 1),
+    0
+  );
   const remainingBudget = totalAvailableBudget - currentSpent;
   const quantityCap = 8;
 
   if (remainingBudget <= 0) {
-    return selected.map(s => ({
+    return selected.map((s) => ({
       ...s,
       bv: type === "75BV" ? 75 : 35,
       quantity: s.quantity || 1,
@@ -29,10 +37,10 @@ const generateList = (
   }
 
   // Filter out already selected products
-  const selectedIds = new Set(selected.map(s => s.id));
+  const selectedIds = new Set(selected.map((s) => s.id));
   const availableProducts: WeightedProduct[] = products
-    .filter(p => !selectedIds.has(p.id))
-    .map(p => ({
+    .filter((p) => !selectedIds.has(p.id))
+    .map((p) => ({
       ...p,
       bv: type === "75BV" ? 75 : 35,
       imp: (type === "75BV" ? 75 : 35) * p.priorityweight,
@@ -41,49 +49,61 @@ const generateList = (
   const W = remainingBudget;
   const n = availableProducts.length;
 
-  // 1D DP: dp[w] = best map of productId → quantity for budget w
-  const dp: Array<Map<string, number> | null> = Array(W + 1).fill(null);
-  dp[0] = new Map();
+  // Precompute importance lookup
+  const impMap = new Map<string, number>();
+  availableProducts.forEach((p) => impMap.set(p.id, p.imp));
+
+  // 1D DP: dp[w] = best state at weight w
+  const dp: Array<DPState | null> = Array(W + 1).fill(null);
+  dp[0] = { map: new Map(), importance: 0 };
 
   for (let i = 0; i < n; i++) {
     const prod = availableProducts[i];
     const weight = prod.price;
+    const prodImp = prod.imp;
 
-    // Traverse backwards to prevent overwriting previous states
+    // Traverse backwards
     for (let w = W; w >= weight; w--) {
       for (let k = 1; k <= quantityCap; k++) {
         const prevW = w - k * weight;
         if (prevW < 0 || !dp[prevW]) break;
 
-        const candidate = new Map(dp[prevW]);
-        const existingQty = candidate.get(prod.id) || 0;
+        const prevState = dp[prevW]!;
+        const candidateMap = new Map(prevState.map);
+        const existingQty = candidateMap.get(prod.id) || 0;
         const newQty = Math.min(existingQty + k, quantityCap);
-        candidate.set(prod.id, newQty);
+        candidateMap.set(prod.id, newQty);
 
-        if (!dp[w] || totalImportance(candidate, availableProducts) > totalImportance(dp[w], availableProducts)) {
-          dp[w] = candidate;
+        const candidateImportance =
+          prevState.importance + prodImp * (newQty - existingQty);
+
+        if (!dp[w] || candidateImportance > dp[w]!.importance) {
+          dp[w] = {
+            map: candidateMap,
+            importance: candidateImportance,
+          };
         }
       }
     }
   }
 
-  // Find best combination from dp array
-  let bestMap: Map<string, number> | null = new Map();
+  // Find best combination
+  let bestState: DPState = { map: new Map(), importance: 0 };
   for (let w = 0; w <= W; w++) {
-    if (dp[w] && totalImportance(dp[w], availableProducts) > totalImportance(bestMap, availableProducts)) {
-      bestMap = dp[w];
+    if (dp[w] && dp[w]!.importance > bestState.importance) {
+      bestState = dp[w]!;
     }
   }
 
   // Convert Map to product list with quantities
   const bestProducts: Product[] = [];
-  bestMap?.forEach((qty, id) => {
-    const prod = availableProducts.find(p => p.id === id);
+  bestState.map.forEach((qty, id) => {
+    const prod = availableProducts.find((p) => p.id === id);
     if (prod) bestProducts.push({ ...prod, quantity: qty });
   });
 
   // Merge with selected items
-  const updatedSelected = selected.map(s => ({
+  const updatedSelected = selected.map((s) => ({
     ...s,
     bv: type === "75BV" ? 75 : 35,
     quantity: s.quantity || 1,
@@ -91,17 +111,5 @@ const generateList = (
 
   return [...updatedSelected, ...bestProducts];
 };
-
-/**
- * Calculate total importance of product map
- */
-function totalImportance(map: Map<string, number> | null, products: WeightedProduct[]): number {
-  let total = 0;
-  map?.forEach((qty, id) => {
-    const prod = products.find(p => p.id === id);
-    if (prod) total += (prod.imp ?? 0) * qty;
-  });
-  return total;
-}
 
 export default generateList;
