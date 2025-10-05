@@ -15,7 +15,19 @@ function Login() {
   const router = useRouter();
 
   const signIn = async () => {
+    if (!email || !password) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Email and password are required",
+        position: "top",
+        visibilityTime: 1500,
+      });
+      return;
+    }
+
     setLoading(true);
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -25,21 +37,35 @@ function Login() {
         position: "top",
         visibilityTime: 1500,
       });
+      setLoading(false);
+      return;
     }
 
-    if (data) {
-      setLoading(false);
+    if (!data.user) {
       Toast.show({
-        type: "success",
-        text1: "User logged in successfully!",
+        type: "error",
+        text1: "Login failed",
+        text2: "Invalid email or password",
         position: "top",
         visibilityTime: 1500,
       });
-      setTimeout(() => {
-        router.push("/budget-setup/instructions");
-      }, 1500);
+      setLoading(false);
+      return;
     }
+
+    Toast.show({
+      type: "success",
+      text1: "User logged in successfully!",
+      position: "top",
+      visibilityTime: 1500,
+    });
+    setLoading(false);
+
+    setTimeout(() => {
+      router.push("/budget-setup/instructions");
+    }, 1500);
   };
+
 
   const handleSignUpClick = () => {
     router.push("/signup");

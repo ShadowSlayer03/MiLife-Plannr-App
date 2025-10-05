@@ -1,20 +1,21 @@
+import BackButton from "@/components/BackButton";
 import ProductList from "@/components/ProductList";
 import ShoppingPlanner from "@/components/ShoppingPlanner";
-import React, { useEffect, useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import BackButton from "@/components/BackButton";
-import { Avatar, Menu } from "react-native-paper";
-import { supabase } from "@/lib/supabase";
-import { User } from "@supabase/supabase-js";
-import Toast from "react-native-toast-message";
-import { Product } from "@/types/Product";
 import UserMenu from "@/components/UserMenu";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { Product } from "@/types/Product";
+import { User } from "@supabase/supabase-js";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
+  const { session, loading } = useAuth();
   const [selected, setSelected] = useState<Product[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(session?.user ?? null);
   const { type, budget, adjustment } = useLocalSearchParams();
   const budgetStr = Array.isArray(budget) ? budget[0] : budget;
   const adjustmentStr = Array.isArray(adjustment) ? adjustment[0] : adjustment;
@@ -30,17 +31,10 @@ export default function Home() {
   );
 
   useEffect(() => {
-    const extractUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) {
-        console.error("Error fetching user:", error);
-      } else {
-        setUser(data.user);
-      }
-    };
-    extractUser();
-  }, []);
-
+    if (session) {
+      setUser(session.user);
+    }
+  }, [session]);
 
   const handleAdd = (product: Product) => {
     const existing = selected.find((p) => p.id === product.id);
@@ -90,21 +84,6 @@ export default function Home() {
 
   const router = useRouter();
 
-  const handleCreateNewProductClick = async () => {
-    closeMenu();
-    router.push("/new-product");
-  }
-
-  const handleMyPlansClick = () => {
-    closeMenu();
-    router.push("/my-plans");
-  }
-
-  const handleProfileClick = () => {
-    closeMenu();
-    router.push("/profile");
-  }
-
   const handleSignOutClick = async () => {
     closeMenu();
     const { error } = await supabase.auth.signOut();
@@ -133,6 +112,12 @@ export default function Home() {
       router.replace("/login");
     }, 1500)
   }
+
+  if (loading) 
+    return (<View className="flex-1 items-center justify-center bg-white">
+              <ActivityIndicator size="large" color="#602c66" />
+            </View>
+        );
 
   return (
     <>

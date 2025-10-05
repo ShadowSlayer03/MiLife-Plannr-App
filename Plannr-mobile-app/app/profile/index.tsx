@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, ActivityIndicator, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "react-native-paper";
-import { supabase } from "@/lib/supabase";
 import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import formatDate from "@/utils/formatDate";

@@ -1,3 +1,4 @@
+import CustomModal from "@/components/CustomModal";
 import NamePrompt from "@/components/NamePrompt";
 import queryClient from "@/config/QueryClient";
 import { useGeneratedList } from "@/hooks/useGeneratedList";
@@ -8,11 +9,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   FlatList,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -22,6 +22,9 @@ export default function GeneratedListPage() {
   const { type } = useLocalSearchParams<{ type: "75BV" | "35BV" }>();
   const { budget, adjustment, list75BV, list35BV, setList75BV, setList35BV } = useGeneratedList();
   const [showPrompt, setShowPrompt] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const reqList = type === "75BV" ? list75BV : list35BV;
   const setList = type === "75BV" ? setList75BV : setList35BV;
@@ -71,52 +74,27 @@ export default function GeneratedListPage() {
     );
   };
 
-  const handleLongPress = (product: Product) => {
-    Alert.alert(
-      "Remove Item?",
-      `Do you want to remove ${product.name} from the list?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: () =>
-            setList(reqList.filter((p) => p.id !== product.id)),
-        },
-      ]
-    );
+  const handleClosePress = (product: Product) => {
+    setSelectedProduct(product);
+    setShowRemoveModal(true);
   };
 
   const handleNextPress = () => {
     if (type === "75BV" && list75BV.length > 0) {
-      router.replace("/budget-setup/35BV");
+      setShowModal(true);
     } else {
       setShowPrompt(true);
     }
   };
 
   const onSaveList = (name: string) => {
-    if (list75BV.length > 0 && list35BV.length > 0) {
-      const combinedList = [...list75BV, ...list35BV];
-      savePlanMutation({
-        name: name || "New Purchase Plan",
-        budget,
-        adjustment,
-        products: combinedList,
-      });
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "One or more lists could not be found",
-        text2: "Redirecting to budget page...",
-        position: "top",
-        visibilityTime: 1500,
-      });
-
-      setTimeout(() => {
-        router.replace("/budget-setup/75BV")
-      }, 1500)
-    }
+    const combinedList = [...list75BV, ...list35BV];
+    savePlanMutation({
+      name: name || "New Purchase Plan",
+      budget,
+      adjustment,
+      products: combinedList,
+    });
   };
 
   const handleGenerateAgain = () => {
@@ -152,10 +130,16 @@ export default function GeneratedListPage() {
         data={reqList}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onLongPress={() => handleLongPress(item)}
+          <View
             className="bg-white p-4 mb-3 rounded-xl shadow-sm flex-row justify-between items-center"
           >
+            <TouchableOpacity
+              onPress={() => handleClosePress(item)}
+              className="absolute top-1 right-2"
+            >
+              <Text className="text-sm font-bricolage-semibold text-gray-500">✕</Text>
+            </TouchableOpacity>
+
             <View className="flex-1">
               <Text className="text-[16px] font-bricolage-semibold text-gray-800">
                 {item.name}
@@ -176,7 +160,7 @@ export default function GeneratedListPage() {
                 onPress={() => handleSub(item)}
                 className="bg-gray-200 p-2 rounded-full"
               >
-                <AntDesign name="minus" size={18} color="#602c66" />
+                <AntDesign name="minus" size={14} color="#602c66" />
               </TouchableOpacity>
 
               <Text className="w-6 text-center font-kanit text-lg">
@@ -187,10 +171,10 @@ export default function GeneratedListPage() {
                 onPress={() => handleAdd(item)}
                 className="bg-mi-purple p-2 rounded-full"
               >
-                <AntDesign name="plus" size={18} color="white" />
+                <AntDesign name="plus" size={14} color="white" />
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+          </View>
         )}
         ListEmptyComponent={
           <Text className="text-gray-500 text-center mt-10 font-kanit">
@@ -220,6 +204,45 @@ export default function GeneratedListPage() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {showModal && (
+        <CustomModal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          title="What Next?"
+          description="Do you want to generate a 35BV list or submit directly?"
+          buttons={[
+            {
+              label: "Generate 35BV",
+              onPress: () => router.replace("/budget-setup/35BV"),
+              bgColor: "bg-mi-purple",
+            },
+            {
+              label: "Submit Directly",
+              onPress: () => setShowPrompt(true),
+              bgColor: "bg-gray-100",
+              textColor: "text-gray-800",
+            },
+          ]}
+        />
+      )}
+
+      {showRemoveModal && selectedProduct && (
+        <CustomModal
+          visible={showRemoveModal}
+          onClose={() => setShowRemoveModal(false)}
+          title={`Remove ${selectedProduct.name}?`}
+          description="Are you sure you want to remove this item from the list?"
+          buttons={[
+            {
+              label: "Remove",
+              onPress: () =>
+                setList(reqList.filter((p) => p.id !== selectedProduct.id)),
+              bgColor: "bg-red-500",
+            },
+          ]}
+        />
+      )}
 
       <NamePrompt
         visible={showPrompt}

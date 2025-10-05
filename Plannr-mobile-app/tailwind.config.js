@@ -28,6 +28,8 @@ module.exports = {
         "mi-text-dark": "#ECEDEE",
         "mi-bg-light": "#ffffff",
         "mi-bg-dark": "#151718",
+        "excel-green": "#217346",
+        "word-purple": "#2B579A"
       },
     },
   },

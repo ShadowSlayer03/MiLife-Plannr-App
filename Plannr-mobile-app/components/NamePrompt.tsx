@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import {
   Modal,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
 
 type NamePromptProps = {
@@ -25,7 +25,7 @@ const NamePrompt = ({ visible, onClose, onSubmit }: NamePromptProps) => {
     >
       <View className="flex-1 bg-black/50 justify-center items-center px-6">
         <View className="bg-white w-full rounded-2xl p-6 shadow-lg">
-          <Text className="text-lg font-bricolage-semibold mb-4 text-gray-800">
+          <Text className="text-lg font-bricolage-semibold mb-4 text-gray-800 text-center">
             Enter Plan Name
           </Text>
 
@@ -33,26 +33,28 @@ const NamePrompt = ({ visible, onClose, onSubmit }: NamePromptProps) => {
             value={planName}
             onChangeText={setPlanName}
             placeholder="My Monthly Plan"
-            className="border border-gray-300 rounded-lg px-3 py-2 mb-4 text-gray-800 font-kanit"
+            className="border border-gray-300 rounded-full px-3 py-2 mb-6 text-gray-800 font-kanit"
           />
 
-          <View className="flex-row justify-end">
+          <View className="flex-col gap-3">
             <TouchableOpacity
-              className="px-4 py-2 mr-2 rounded-lg bg-gray-200"
+              className="bg-gray-200 py-3 rounded-full items-center shadow-md active:opacity-70"
               onPress={onClose}
             >
-              <Text className="text-gray-700 font-bricolage-semibold">Cancel</Text>
+              <Text className="text-gray-800 font-bricolage-semibold text-base">
+                Cancel
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="px-4 py-2 rounded-lg bg-mi-purple"
+              className="bg-mi-purple py-3 rounded-full items-center shadow-md active:opacity-70"
               onPress={() => {
                 onSubmit(planName.trim());
                 setPlanName("");
                 onClose();
               }}
             >
-              <Text className="text-white font-bricolage-semibold">
+              <Text className="text-white font-bricolage-semibold text-base">
                 Save
               </Text>
             </TouchableOpacity>

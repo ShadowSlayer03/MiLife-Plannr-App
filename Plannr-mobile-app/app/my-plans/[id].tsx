@@ -1,18 +1,18 @@
+import BackButton from "@/components/BackButton";
+import ExportButton from "@/components/ExportButton";
+import { fetchPlan } from "@/lib/queries";
+import { Plan } from "@/types/Plan";
+import formatDate from "@/utils/formatDate";
+import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
-  FlatList,
   ActivityIndicator,
+  FlatList,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useQuery } from "@tanstack/react-query";
-import formatDate from "@/utils/formatDate";
-import { Plan } from "@/types/Plan";
-import { fetchPlan } from "@/lib/queries";
-import BackButton from "@/components/BackButton";
-import ExportButton from "@/components/ExportButton";
 
 const PlanDetail = () => {
   const { id } = useLocalSearchParams();
@@ -28,6 +28,8 @@ const PlanDetail = () => {
     enabled: !!id,
     staleTime: 1000 * 60 * 5,
   });
+
+  console.log("Plan:",plan);
 
   if (isLoading) {
     return (
@@ -81,7 +83,10 @@ const PlanDetail = () => {
         </View>
       </View>
 
-      <ExportButton plan={plan} />
+      <View className="flex my-2 mb-6">
+        <ExportButton plan={plan} format="excel" />
+        <ExportButton plan={plan} format="word" />
+      </View>
 
       {/* Products */}
       <Text className="text-xl font-bricolage-semibold mb-3 text-gray-800">

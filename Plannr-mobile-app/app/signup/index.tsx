@@ -1,6 +1,6 @@
 import Icon from "@/components/Icon";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { usePathname } from 'expo-router';
 import Toast from "react-native-toast-message";
 
 
@@ -84,11 +83,11 @@ export default function SignUp() {
     setLoading(true);
     try {
       // Sign up user
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
 
-      // Get user and insert profile
-      const { data: { user } } = await supabase.auth.getUser();
+      // Use user from signUpData
+      const user = signUpData.user;
       if (user) {
         const { error: profileError } = await supabase
           .from("profiles")
@@ -193,7 +192,7 @@ export default function SignUp() {
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text className="text-white font-bricolage-semibold text-base">Signup</Text>
+          <Text numberOfLines={1} className="text-white font-bricolage-semibold text-[16px] leading-4">Signup</Text>
         )}
       </TouchableOpacity>
 
@@ -203,7 +202,7 @@ export default function SignUp() {
         className="bg-gray-100 py-3 rounded-full items-center shadow-md"
         disabled={loading}
       >
-        <Text className="text-gray-800 font-bricolage-semibold text-base">Login</Text>
+        <Text numberOfLines={1} className="text-gray-800 font-bricolage-semibold text-[16px] leading-4">Login</Text>
       </TouchableOpacity>
     </View>
   );
