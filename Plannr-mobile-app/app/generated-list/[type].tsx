@@ -1,7 +1,9 @@
 import CustomModal from "@/components/CustomModal";
 import NamePrompt from "@/components/NamePrompt";
 import queryClient from "@/config/QueryClient";
+import { GeneratedListPageContent } from "@/constants/Content";
 import { useGeneratedList } from "@/hooks/useGeneratedList";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { savePlan } from "@/lib/queries";
 import { Product } from "@/types/Product";
 import { AntDesign } from "@expo/vector-icons";
@@ -9,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Text,
   TouchableOpacity,
@@ -25,6 +28,7 @@ export default function GeneratedListPage() {
   const [showModal, setShowModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const { translated, translating } = useTranslatePage(GeneratedListPageContent);
 
   const reqList = type === "75BV" ? list75BV : list35BV;
   const setList = type === "75BV" ? setList75BV : setList35BV;
@@ -47,7 +51,7 @@ export default function GeneratedListPage() {
     onError: (error: any) => {
       Toast.show({
         type: "error",
-        text1: "Failed to save plan",
+        text1: translated.saveErrorTitle,
         text2: error.message,
         position: "top",
       });
@@ -101,17 +105,28 @@ export default function GeneratedListPage() {
     router.back();
   };
 
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center space-y-3">
+        <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit text-neutral-300">
+          {translated.loadingMessage}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-gray-100 p-4">
       <Text className="text-2xl text-center font-bricolage-bold my-4">
-        Generated List ({type})
+        {translated.pageTitle} ({type})
       </Text>
 
       {/* 🟣 Summary Section */}
       <View className="bg-mi-purple rounded-xl shadow-lg px-4 py-3 mb-5">
         <View className="flex-row justify-between">
           <Text className="text-white font-bricolage-semibold">
-            Total Price
+            {translated.totalPriceLabel}
           </Text>
           <Text className="text-white font-bricolage-bold">
             ₹{totalPrice}
@@ -119,7 +134,7 @@ export default function GeneratedListPage() {
         </View>
         <View className="flex-row justify-between mt-1">
           <Text className="text-white font-bricolage-semibold">
-            Total BV
+            {translated.totalBVLabel}
           </Text>
           <Text className="text-white font-bricolage-bold">{totalBV}</Text>
         </View>
@@ -178,7 +193,7 @@ export default function GeneratedListPage() {
         )}
         ListEmptyComponent={
           <Text className="text-gray-500 text-center mt-10 font-kanit">
-            No items generated yet.
+            {translated.listEmptyText}
           </Text>
         }
       />
@@ -190,7 +205,7 @@ export default function GeneratedListPage() {
           onPress={handleGenerateAgain}
         >
           <Text className="text-center text-gray-800 font-bricolage-semibold text-lg">
-            Generate Again
+            {translated.generateAgain}
           </Text>
         </TouchableOpacity>
 
@@ -200,7 +215,7 @@ export default function GeneratedListPage() {
           disabled={isPending}
         >
           <Text className="text-center text-white font-bricolage-semibold text-lg">
-            {type === "75BV" ? "Continue" : isPending ? "Saving..." : "Save"}
+            {type === "75BV" ? translated.continueText : isPending ? translated.savingText : translated.saveText}
           </Text>
         </TouchableOpacity>
       </View>
@@ -209,16 +224,16 @@ export default function GeneratedListPage() {
         <CustomModal
           visible={showModal}
           onClose={() => setShowModal(false)}
-          title="What Next?"
-          description="Do you want to generate a 35BV list or submit directly?"
+          title={translated.whatNextTitle}
+          description={translated.whatNextDescription}
           buttons={[
             {
-              label: "Generate 35BV",
+              label: translated.generate35BVText,
               onPress: () => router.replace("/budget-setup/35BV"),
               bgColor: "bg-mi-purple",
             },
             {
-              label: "Submit Directly",
+              label: translated.submitDirectlyText,
               onPress: () => setShowPrompt(true),
               bgColor: "bg-gray-100",
               textColor: "text-gray-800",
@@ -231,11 +246,11 @@ export default function GeneratedListPage() {
         <CustomModal
           visible={showRemoveModal}
           onClose={() => setShowRemoveModal(false)}
-          title={`Remove ${selectedProduct.name}?`}
-          description="Are you sure you want to remove this item from the list?"
+          title={`${translated.removeText} ${selectedProduct.name}?`}
+          description={translated.removeDescription}
           buttons={[
             {
-              label: "Remove",
+              label: translated.removeText,
               onPress: () =>
                 setList(reqList.filter((p) => p.id !== selectedProduct.id)),
               bgColor: "bg-red-500",

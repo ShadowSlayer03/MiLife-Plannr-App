@@ -1,12 +1,14 @@
-import React from "react";
-import { View, Text, ActivityIndicator, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar } from "react-native-paper";
+import BackButton from "@/components/BackButton";
+import { ProfilePageContent } from "@/constants/Content";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
+import { fetchProfile } from "@/lib/queries";
+import formatDate from "@/utils/formatDate";
 import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
-import formatDate from "@/utils/formatDate";
-import { fetchProfile } from "@/lib/queries";
-import BackButton from "@/components/BackButton";
+import React from "react";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { Avatar } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export type ProfileData = {
   user: User;
@@ -25,7 +27,9 @@ const Profile = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  if (isLoading) {
+  const { translated, translating } = useTranslatePage(ProfilePageContent);
+
+  if (isLoading || translating) {
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="#9333EA" />
@@ -37,7 +41,7 @@ const Profile = () => {
     return (
       <View className="flex-1 justify-center items-center">
         <Text className="text-red-600 font-kanit">
-          Error: {error.message}
+          {translated.errorText} {error.message}
         </Text>
       </View>
     );
@@ -46,7 +50,7 @@ const Profile = () => {
   if (!profile) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-lg text-gray-700">No user logged in</Text>
+        <Text className="text-lg text-gray-700">{translated.noUserLoggedInText}</Text>
       </View>
     );
   }
@@ -67,44 +71,44 @@ const Profile = () => {
         />
 
         {/* Basic Info */}
-        <Text className="mt-4 text-2xl font-bricolage-bold text-gray-800">
+        <Text className="mt-4 text-2xl text-center font-bricolage-bold text-gray-800">
           {user.email}
         </Text>
-        <Text className="mt-1 text-base text-gray-600">ID: {user.id}</Text>
+        <Text className="mt-1 text-base text-center text-gray-600">{translated.idText} {user.id}</Text>
 
         {/* Metadata */}
         <View className="mt-6 w-full bg-white rounded-2xl shadow p-4">
           <Text className="text-lg font-kanit-semibold mb-4 text-gray-700">
-            Profile Details
+            {translated.profileDetailsText}
           </Text>
 
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Role: {role}
+            {translated.roleText} {role}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Provider: {user.app_metadata?.provider}
+            {translated.providerText} {user.app_metadata?.provider}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Status: {user.role}
+            {translated.statusText} {user.role}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Created At: {formatDate(user.created_at)}
+            {translated.createdAtText} {formatDate(user.created_at)}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Confirmed At: {formatDate(user.confirmed_at)}
+            {translated.confirmedAtText} {formatDate(user.confirmed_at)}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Last Sign In: {formatDate(user.last_sign_in_at)}
+            {translated.lastSignInAt} {formatDate(user.last_sign_in_at)}
           </Text>
 
           <Text className="text-lg font-kanit-semibold text-gray-700 my-4">
-            Verification
+            {translated.verificationText}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Email Verified: {user.user_metadata?.email_verified ? "✅ Yes" : "❌ No"}
+            {translated.emailVerfiedText} {user.user_metadata?.email_verified ? "✅ Yes" : "❌ No"}
           </Text>
           <Text className="text-sm text-gray-600 font-kanit mb-2">
-            Phone Verified: {user.user_metadata?.phone_verified ? "✅ Yes" : "❌ No"}
+            {translated.phoneVerifiedText} {user.user_metadata?.phone_verified ? "✅ Yes" : "❌ No"}
           </Text>
         </View>
       </ScrollView>

@@ -5,6 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 import queryClient from "@/config/QueryClient";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
+import { NewProductPageContent } from "@/constants/Content";
 
 const NewProduct = () => {
   const [name, setName] = useState("");
@@ -12,8 +14,17 @@ const NewProduct = () => {
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { translated, translating } = useTranslatePage(NewProductPageContent)
 
   const router = useRouter();
+
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#9333EA" />
+      </View>
+    );
+  }
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -38,8 +49,8 @@ const NewProduct = () => {
     if (!name || !subbrand || !price) {
       Toast.show({
         type: "error",
-        text1: "Validation",
-        text2: "Please fill all fields.",
+        text1: translated.validationText,
+        text2: translated.fillAllFieldsText,
         position: "top",
         visibilityTime: 1500,
       });
@@ -50,8 +61,8 @@ const NewProduct = () => {
     if (isNaN(parsedPrice) || parsedPrice <= 0) {
       Toast.show({
         type: "error",
-        text1: "Validation",
-        text2: "Please enter a valid price.",
+        text1: translated.validationText,
+        text2: translated.invalidPriceText,
         position: "top",
         visibilityTime: 1500,
       });
@@ -79,8 +90,8 @@ const NewProduct = () => {
 
       Toast.show({
         type: "success",
-        text1: "Success",
-        text2: "Product added successfully!",
+        text1: translated.successText,
+        text2: translated.addProductSuccessText,
         position: "top",
         visibilityTime: 1500,
       });
@@ -95,7 +106,7 @@ const NewProduct = () => {
     return (
       <SafeAreaView className="flex-1 justify-center items-center bg-gray-100">
         <Text className="text-lg font-kanit-semibold text-gray-700">
-          You are not authorized to add products
+          {translated.notAuthorizedTitle}
         </Text>
       </SafeAreaView>
     );
@@ -104,36 +115,36 @@ const NewProduct = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-100 p-6">
       <Text className="text-2xl font-bricolage-bold text-gray-800 mb-6 text-center">
-        Add Product
+        {translated.addProductText}
       </Text>
 
       <View className="flex-1 justify-center">
         {/* Name Input */}
-        <Text className="text-gray-700 font-kanit mb-2">Product Name</Text>
+        <Text className="text-gray-700 font-kanit mb-2">{translated.nameLabel}</Text>
         <TextInput
           value={name}
           onChangeText={setName}
-          placeholder="e.g. Neustar Face Wash"
+          placeholder={translated.namePlaceholder}
           placeholderTextColor="#aaa"
           className="bg-white border-2 border-gray-200 focus:border-mi-purple rounded-xl px-4 py-3 mb-4 text-gray-800 font-kanit shadow-sm"
         />
 
         {/* Subbrand Input */}
-        <Text className="text-gray-700 font-kanit mb-2">Subbrand</Text>
+        <Text className="text-gray-700 font-kanit mb-2">{translated.subbrandLabel}</Text>
         <TextInput
           value={subbrand}
           onChangeText={setSubbrand}
-          placeholder="e.g. Neustar"
+          placeholder={translated.subbrandPlaceholder}
           placeholderTextColor="#aaa"
           className="bg-white border-2 border-gray-200 focus:border-mi-purple rounded-xl px-4 py-3 mb-4 text-gray-800 font-kanit shadow-sm"
         />
 
         {/* Price Input */}
-        <Text className="text-gray-700 font-kanit mb-2">Price</Text>
+        <Text className="text-gray-700 font-kanit mb-2">{translated.priceLabel}</Text>
         <TextInput
           value={price}
           onChangeText={setPrice}
-          placeholder="e.g. 499"
+          placeholder={translated.pricePlaceholder}
           keyboardType="numeric"
           placeholderTextColor="#aaa"
           className="bg-white border-2 border-gray-200 focus:border-mi-purple rounded-xl px-4 py-3 mb-6 text-gray-800 font-kanit shadow-sm"
@@ -149,7 +160,7 @@ const NewProduct = () => {
             <ActivityIndicator color="#fff" />
           ) : (
             <Text className="text-white font-kanit-semibold text-lg">
-              Add Product
+              {translated.pageTitle}
             </Text>
           )}
         </TouchableOpacity>

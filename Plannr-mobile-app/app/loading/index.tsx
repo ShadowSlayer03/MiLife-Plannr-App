@@ -1,4 +1,6 @@
+import { LoadingPageContent } from "@/constants/Content";
 import { useGeneratedList } from "@/hooks/useGeneratedList";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { fetchProducts } from "@/lib/queries";
 import { createAndStoreList } from "@/utils/createAndStoreList";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -10,6 +12,15 @@ const LoadingPage: React.FC = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { setList75BV, setList35BV, setBudget, setAdjustment } = useGeneratedList();
+  const { translated, translating } = useTranslatePage(LoadingPageContent);
+
+  if (translating) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#602c66" />
+      </View>
+    );
+  }
 
   useEffect(() => {
     const generateList = async () => {
@@ -53,7 +64,7 @@ const LoadingPage: React.FC = () => {
     <View className="flex-1 justify-center items-center bg-mi-purple">
       <ActivityIndicator size="large" color="#fff" />
       <Text className="text-white font-kanit mt-4 text-xl">
-        Generating your list...
+        {translated.loadingText}
       </Text>
     </View>
   );

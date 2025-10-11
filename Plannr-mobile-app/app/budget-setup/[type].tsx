@@ -1,39 +1,35 @@
-import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
+import { BudgetSetupPageContent } from "@/constants/Content";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 export default function BudgetSetup() {
   const [budget, setBudget] = useState<string>("");
   const [adjustment, setAdjustment] = useState<string>("");
-  const { type } = useLocalSearchParams();
-
+  const { type } = useLocalSearchParams<{ type: "75BV" | "35BV" }>();
   const router = useRouter();
 
-  // Allow only digits 0–9
-  const handleBudgetChange = (text: string) => {
-    const sanitized = text.replace(/[^0-9]/g, ""); // removes non-numeric chars
-    setBudget(sanitized);
-  };
+  const { translated, translating } = useTranslatePage(BudgetSetupPageContent);
 
-  const handleAdjustmentChange = (text: string) => {
-    const sanitized = text.replace(/[^0-9]/g, "");
-    setAdjustment(sanitized);
-  };
+  const handleBudgetChange = (text: string) => setBudget(text.replace(/[^0-9]/g, ""));
+  const handleAdjustmentChange = (text: string) => setAdjustment(text.replace(/[^0-9]/g, ""));
 
   const handleContinue = () => {
     if (!budget) {
       Toast.show({
         type: "error",
-        text1: "Budget not set",
+        text1: translated.budgetNotSetError,
         text1Style: { color: "red" },
         position: "top",
         visibilityTime: 1500,
       });
       return;
     }
+
     router.push({
       pathname: "/home",
       params: {
@@ -44,17 +40,28 @@ export default function BudgetSetup() {
     });
   };
 
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit mt-2">{translated.pageTitle}</Text>
+      </View>
+    );
+  }
+
+  const formattedTitle = (translated.setBudgetForType || "").replace(/\{.*?\}/, type || "");
+
   return (
     <>
       <BackButton />
       <SafeAreaView className="flex-1 bg-gray-100 px-8 justify-center">
         <Text className="text-3xl font-bricolage-bold text-center mb-8 text-mi-purple">
-          Set Budget for {type} products
+          {formattedTitle}
         </Text>
 
         {/* Budget Input */}
         <TextInput
-          placeholder="Enter your budget"
+          placeholder={translated.budgetPlaceholder}
           keyboardType="numeric"
           value={budget}
           onChangeText={handleBudgetChange}
@@ -64,7 +71,7 @@ export default function BudgetSetup() {
 
         {/* Adjustment Input */}
         <TextInput
-          placeholder="Enter adjustment"
+          placeholder={translated.adjustmentPlaceholder}
           keyboardType="numeric"
           value={adjustment}
           onChangeText={handleAdjustmentChange}
@@ -77,7 +84,7 @@ export default function BudgetSetup() {
           className="bg-mi-purple py-3 rounded-full items-center shadow-md"
         >
           <Text className="text-white font-bricolage-semibold text-lg">
-            Continue
+            {translated.continueButton}
           </Text>
         </TouchableOpacity>
       </SafeAreaView>

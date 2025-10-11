@@ -1,5 +1,7 @@
 import BackButton from "@/components/BackButton";
 import ExportButton from "@/components/ExportButton";
+import { PlanDetailPageContent } from "@/constants/Content";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { fetchPlan } from "@/lib/queries";
 import { Plan } from "@/types/Plan";
 import formatDate from "@/utils/formatDate";
@@ -16,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const PlanDetail = () => {
   const { id } = useLocalSearchParams();
+  const { translated, translating } = useTranslatePage(PlanDetailPageContent);
 
   const {
     data: plan,
@@ -29,12 +32,13 @@ const PlanDetail = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  console.log("Plan:",plan);
-
-  if (isLoading) {
+  if (isLoading || translating) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="flex-1 justify-center items-center space-y-3">
         <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit text-neutral-300">
+          {translated.loadingMessage}
+        </Text>
       </View>
     );
   }
@@ -42,7 +46,7 @@ const PlanDetail = () => {
   if (isError) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-red-600 font-kanit">Error: {error.message}</Text>
+        <Text className="text-red-600 font-kanit">{translated.errorText} {error.message}</Text>
       </View>
     );
   }
@@ -50,7 +54,7 @@ const PlanDetail = () => {
   if (!plan) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-gray-700 font-kanit">Plan not found</Text>
+        <Text className="text-gray-700 font-kanit">{translated.planNotFoundText}</Text>
       </View>
     );
   }
@@ -64,19 +68,19 @@ const PlanDetail = () => {
           {plan.name}
         </Text>
         <View className="flex-row justify-between mb-1">
-          <Text className="text-sm text-gray-100 font-kanit">Budget</Text>
+          <Text className="text-sm text-gray-100 font-kanit">{translated.budgetLabel}</Text>
           <Text className="text-sm font-kanit-semibold text-gray-300">
             ₹{plan.budget}
           </Text>
         </View>
         <View className="flex-row justify-between mb-1">
-          <Text className="text-sm text-gray-100 font-kanit">Adjustment</Text>
+          <Text className="text-sm text-gray-100 font-kanit">{translated.adjustmentLabel}</Text>
           <Text className="text-sm font-kanit-semibold text-gray-300">
             ₹{plan.adjustment}
           </Text>
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-sm text-gray-100 font-kanit">Created</Text>
+          <Text className="text-sm text-gray-100 font-kanit">{translated.createdLabel}</Text>
           <Text className="text-sm text-gray-200 font-kanit-semibold">
             {formatDate(plan.created_at)}
           </Text>
@@ -90,7 +94,7 @@ const PlanDetail = () => {
 
       {/* Products */}
       <Text className="text-xl font-bricolage-semibold mb-3 text-gray-800">
-        Products
+        {translated.productsHeader}
       </Text>
       <FlatList
         data={plan.products}
@@ -105,21 +109,21 @@ const PlanDetail = () => {
               {item.name}
             </Text>
             <Text className="text-sm text-gray-600 font-kanit">
-              Sub-Brand: {item.subbrand}
+              {translated.subbrandLabel} {item.subbrand}
             </Text>
             <View className="flex-row justify-between mt-2">
               <Text className="text-sm text-gray-700 font-kanit">
-                Price: ₹{item.price}
+                {translated.priceLabel} ₹{item.price}
               </Text>
               <Text className="text-sm text-gray-700 font-kanit">
-                Qty: {item.quantity}
+                {translated.quantityLabel} {item.quantity}
               </Text>
             </View>
           </View>
         )}
         ListEmptyComponent={
           <Text className="text-gray-500 text-center mt-4 font-kanit">
-            No products in this plan
+            {translated.noProductsText}
           </Text>
         }
       />

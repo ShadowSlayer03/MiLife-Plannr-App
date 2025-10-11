@@ -1,7 +1,9 @@
-import Icon from "@/components/Icon";
-import { supabase } from "@/lib/supabase";
-import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "expo-router";
+import Icon from "@/components/Icon";
+import { SignupPageContent } from "@/constants/Content";
+import Toast from "react-native-toast-message";
 import {
   ActivityIndicator,
   Text,
@@ -9,8 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
-
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -22,39 +23,27 @@ export default function SignUp() {
   const [passwordError, setPasswordError] = useState("");
   const [confirmError, setConfirmError] = useState("");
 
+  const { translated, translating } = useTranslatePage(SignupPageContent);
   const router = useRouter();
-  const pathname = usePathname();
 
-
-  // Password strength check
   useEffect(() => {
-    if (!password) {
-      setPasswordError("");
-      return;
-    }
+    if (!password) return setPasswordError("");
 
-    const lengthCheck = password.length >= 8;
-    const uppercaseCheck = /[A-Z]/.test(password);
-    const lowercaseCheck = /[a-z]/.test(password);
-    const numberCheck = /[0-9]/.test(password);
-    const specialCheck = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const rules = [
+      { check: password.length >= 8, msg: "Password must be at least 8 characters." },
+      { check: /[A-Z]/.test(password), msg: "Include at least 1 uppercase letter." },
+      { check: /[a-z]/.test(password), msg: "Include at least 1 lowercase letter." },
+      { check: /[0-9]/.test(password), msg: "Include at least 1 number." },
+      { check: /[!@#$%^&*(),.?\":{}|<>]/.test(password), msg: "Include at least 1 special character." },
+    ];
 
-    if (!lengthCheck) setPasswordError("Password must be at least 8 characters.");
-    else if (!uppercaseCheck) setPasswordError("Include at least 1 uppercase letter.");
-    else if (!lowercaseCheck) setPasswordError("Include at least 1 lowercase letter.");
-    else if (!numberCheck) setPasswordError("Include at least 1 number.");
-    else if (!specialCheck) setPasswordError("Include at least 1 special character.");
-    else setPasswordError("");
+    const invalid = rules.find(r => !r.check);
+    setPasswordError(invalid ? invalid.msg : "");
   }, [password]);
 
-  // Confirm password match check
   useEffect(() => {
-    if (!confirmPassword) {
-      setConfirmError("");
-      return;
-    }
-    if (password !== confirmPassword) setConfirmError("Passwords do not match.");
-    else setConfirmError("");
+    if (!confirmPassword) return setConfirmError("");
+    setConfirmError(password === confirmPassword ? "" : "Passwords do not match.");
   }, [password, confirmPassword]);
 
   const signUp = async () => {
@@ -73,7 +62,7 @@ export default function SignUp() {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "All fields are required!",
+        text2: passwordError || confirmError,
         position: "top",
         visibilityTime: 1500,
       });
@@ -82,21 +71,17 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      // Sign up user
       const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
 
-      // Use user from signUpData
       const user = signUpData.user;
       if (user) {
         const { error: profileError } = await supabase
           .from("profiles")
           .insert([{ id: user.id, role: "user" }]);
-
         if (profileError) throw profileError;
       }
 
-      // Success
       Toast.show({
         type: "success",
         text1: "Success",
@@ -104,9 +89,8 @@ export default function SignUp() {
         position: "top",
         visibilityTime: 1500,
       });
-      setTimeout(() => {
-        router.push("/login");
-      }, 1500)
+
+      setTimeout(() => router.push("/login"), 1500);
     } catch (error: any) {
       Toast.show({
         type: "error",
@@ -120,9 +104,7 @@ export default function SignUp() {
     }
   };
 
-  const handleLoginClick = () => {
-    router.push("/login")
-  };
+  const handleLoginClick = () => router.push("/login");
 
   return (
     <View className="flex-1 justify-center px-8 bg-white">
@@ -131,12 +113,12 @@ export default function SignUp() {
       </View>
 
       <Text className="text-3xl font-bricolage-bold mb-8 text-center text-mi-purple">
-        Signup
+        {translated.heading}
       </Text>
 
       {/* Email Input */}
       <TextInput
-        placeholder="Email"
+        placeholder={translated.emailPlaceholder}
         value={email}
         onChangeText={setEmail}
         className="bg-white border-2 border-gray-200 focus:border-mi-purple rounded-full px-5 py-3 mb-4 shadow-md text-gray-800 font-kanit"
@@ -148,7 +130,7 @@ export default function SignUp() {
       {/* Password Input */}
       <View className="relative">
         <TextInput
-          placeholder="Password"
+          placeholder={translated.passwordPlaceholder}
           value={password}
           secureTextEntry={!showPassword}
           onChangeText={setPassword}
@@ -167,7 +149,7 @@ export default function SignUp() {
       {/* Confirm Password Input */}
       <View className="relative">
         <TextInput
-          placeholder="Confirm Password"
+          placeholder={translated.confirmPasswordPlaceholder}
           value={confirmPassword}
           secureTextEntry={!showConfirmPassword}
           onChangeText={setConfirmPassword}
@@ -187,12 +169,14 @@ export default function SignUp() {
       <TouchableOpacity
         onPress={signUp}
         className="bg-mi-purple py-3 rounded-full mb-4 items-center shadow-md"
-        disabled={loading}
+        disabled={loading || translating}
       >
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text numberOfLines={1} className="text-white font-bricolage-semibold text-[16px] leading-4">Signup</Text>
+          <Text numberOfLines={1} className="text-white font-bricolage-semibold text-[16px] leading-4">
+            {translated.signUpButtonText}
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -200,9 +184,11 @@ export default function SignUp() {
       <TouchableOpacity
         onPress={handleLoginClick}
         className="bg-gray-100 py-3 rounded-full items-center shadow-md"
-        disabled={loading}
+        disabled={loading || translating}
       >
-        <Text numberOfLines={1} className="text-gray-800 font-bricolage-semibold text-[16px] leading-4">Login</Text>
+        <Text numberOfLines={1} className="text-gray-800 font-bricolage-semibold text-[16px] leading-4">
+          {translated.loginButtonText}
+        </Text>
       </TouchableOpacity>
     </View>
   );

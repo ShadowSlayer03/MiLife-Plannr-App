@@ -8,6 +8,7 @@ import { PaperProvider } from "react-native-paper";
 import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "@/config/QueryClient";
 import { GeneratedListProvider } from "@/context/GeneratedListContext";
+import { TranslationProvider } from "@/context/TranslationContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,20 +22,22 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   return (
-    <GeneratedListProvider>
-      <QueryClientProvider client={queryClient}>
-        <PaperProvider>
-          <>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="signup" />
-              <Stack.Screen name="login" />
-              <Stack.Screen name="home" />
-            </Stack>
-            <Toast config={toastConfig} />
-          </>
-        </PaperProvider>
-      </QueryClientProvider>
-    </GeneratedListProvider>
+    <TranslationProvider>
+      <GeneratedListProvider>
+        <QueryClientProvider client={queryClient}>
+          <PaperProvider>
+            <>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="signup" />
+                <Stack.Screen name="login" />
+                <Stack.Screen name="home" />
+              </Stack>
+              <Toast config={toastConfig} />
+            </>
+          </PaperProvider>
+        </QueryClientProvider>
+      </GeneratedListProvider>
+    </TranslationProvider>
   );
 }

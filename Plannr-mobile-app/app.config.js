@@ -51,6 +51,8 @@ export default ({ config }) => ({
   extra: {
     supabaseUrl: process.env.SUPABASE_URL,
     supabaseKey: process.env.SUPABASE_KEY,
+    supabaseEdgeUrl: process.env.SUPABASE_EDGE_URL,
+    adminEmail: process.env.ADMIN_EMAIL,
     "eas": {
       "projectId": "43381654-4a86-4b4b-9260-dd9216094fc3"
     }

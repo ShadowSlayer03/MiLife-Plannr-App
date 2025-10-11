@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Pressable } from "react-native";
+import { Alert, Pressable } from "react-native";
 import { Avatar, Menu } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
 import Toast from "react-native-toast-message";
 import { User } from "@supabase/supabase-js";
+import Constants from 'expo-constants';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface UserMenuProps {
   user: User | null;
@@ -16,6 +18,13 @@ export default function UserMenu({ user }: UserMenuProps) {
 
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
+
+  const adminEmail = Constants.expoConfig?.extra?.adminEmail;
+
+  if (!adminEmail) {
+    Alert.alert("Admin Email not set!");
+    console.error("ADMIN_EMAIL env variable not found.")
+  }
 
   const handleCreateNewProductClick = () => {
     closeMenu();
@@ -31,6 +40,12 @@ export default function UserMenu({ user }: UserMenuProps) {
     closeMenu();
     router.push("/profile");
   };
+
+  const handleLangChange = async () => {
+    closeMenu();
+    await AsyncStorage.removeItem("user_lang");
+    router.push("/language");
+  }
 
   const handleSignOutClick = async () => {
     closeMenu();
@@ -86,13 +101,18 @@ export default function UserMenu({ user }: UserMenuProps) {
         title="Profile"
         titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
       />
-      {user?.email === "arjunnambiar03@gmail.com" && (
+      {user?.email === adminEmail && (
         <Menu.Item
           onPress={handleCreateNewProductClick}
           title="Add Product"
           titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
         />
       )}
+      <Menu.Item
+        onPress={handleLangChange}
+        title="Change Language"
+        titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
+      />
       <Menu.Item
         onPress={handleSignOutClick}
         title="Sign Out"

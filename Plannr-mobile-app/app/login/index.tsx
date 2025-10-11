@@ -1,17 +1,19 @@
-import Icon from "@/components/Icon";
+import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Icon from "@/components/Icon";
+import { LoginPageContent } from "@/constants/Content";
 import Toast from "react-native-toast-message";
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  const { translated, translating } = useTranslatePage(LoginPageContent);
   const router = useRouter();
 
   const signIn = async () => {
@@ -27,25 +29,13 @@ function Login() {
     }
 
     setLoading(true);
-
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
+    if (error || !data.user) {
       Toast.show({
         type: "error",
-        text1: error.message,
-        position: "top",
-        visibilityTime: 1500,
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (!data.user) {
-      Toast.show({
-        type: "error",
-        text1: "Login failed",
-        text2: "Invalid email or password",
+        text1: error?.message || "Login failed",
+        text2: error ? undefined : "Invalid email or password",
         position: "top",
         visibilityTime: 1500,
       });
@@ -59,17 +49,12 @@ function Login() {
       position: "top",
       visibilityTime: 1500,
     });
-    setLoading(false);
 
-    setTimeout(() => {
-      router.push("/budget-setup/instructions");
-    }, 1500);
+    setLoading(false);
+    setTimeout(() => router.push("/budget-setup/instructions"), 1500);
   };
 
-
-  const handleSignUpClick = () => {
-    router.push("/signup");
-  }
+  const handleSignUpClick = () => router.push("/signup");
 
   return (
     <View className="flex-1 justify-center px-8 bg-white">
@@ -78,12 +63,12 @@ function Login() {
       </View>
 
       <Text className="text-3xl font-bricolage-bold mb-8 text-center text-mi-purple">
-        Login
+        {translated.heading}
       </Text>
 
       {/* Email Input */}
       <TextInput
-        placeholder="Email"
+        placeholder={translated.emailPlaceholder}
         value={email}
         onChangeText={setEmail}
         className="bg-white border-2 border-gray-200 focus:border-mi-purple rounded-full px-5 py-3 mb-4 shadow-md text-gray-800 font-kanit"
@@ -95,7 +80,7 @@ function Login() {
       {/* Password Input */}
       <View className="relative">
         <TextInput
-          placeholder="Password"
+          placeholder={translated.passwordPlaceholder}
           value={password}
           secureTextEntry={!showPassword}
           onChangeText={setPassword}
@@ -114,12 +99,14 @@ function Login() {
       <TouchableOpacity
         onPress={signIn}
         className="bg-mi-purple py-3 rounded-full mb-4 items-center shadow-md"
-        disabled={loading}
+        disabled={loading || translating}
       >
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text className="text-white font-bricolage-semibold text-[16px] leading-4">Login</Text>
+          <Text className="text-white font-bricolage-semibold text-[16px] leading-4">
+            {translated.loginButtonText}
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -127,9 +114,11 @@ function Login() {
       <TouchableOpacity
         onPress={handleSignUpClick}
         className="bg-gray-100 py-3 rounded-full items-center shadow-md"
-        disabled={loading}
+        disabled={loading || translating}
       >
-        <Text className="text-gray-800 font-bricolage-semibold text-[16px] leading-4">Signup</Text>
+        <Text className="text-gray-800 font-bricolage-semibold text-[16px] leading-4">
+          {translated.signUpButtonText}
+        </Text>
       </TouchableOpacity>
     </View>
   );

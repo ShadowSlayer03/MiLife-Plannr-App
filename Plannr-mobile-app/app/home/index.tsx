@@ -2,7 +2,9 @@ import BackButton from "@/components/BackButton";
 import ProductList from "@/components/ProductList";
 import ShoppingPlanner from "@/components/ShoppingPlanner";
 import UserMenu from "@/components/UserMenu";
+import { HomePageContent } from "@/constants/Content";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { supabase } from "@/lib/supabase";
 import { Product } from "@/types/Product";
 import { User } from "@supabase/supabase-js";
@@ -30,6 +32,8 @@ export default function Home() {
     [selected]
   );
 
+  const { translated, translating } = useTranslatePage(HomePageContent);
+
   useEffect(() => {
     if (session) {
       setUser(session.user);
@@ -43,7 +47,7 @@ export default function Home() {
     if (newTotal > budgetNum + adjustmentNum) {
       Toast.show({
         type: "error",
-        text1: "Budget exceeded!",
+        text1: translated.budgetExceededTitle,
         position: "top",
         visibilityTime: 1500,
       });
@@ -76,48 +80,16 @@ export default function Home() {
     }
   };
 
-
-  // Dropdown menu state
-  const [visible, setVisible] = useState(false);
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-
-  const router = useRouter();
-
-  const handleSignOutClick = async () => {
-    closeMenu();
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      Toast.show({
-        type: "error",
-        text1: "Signout failed",
-        text2: error.message || "Error: User signout failed",
-        text1Style: { color: "red" },
-        position: "top",
-        visibilityTime: 1500,
-      });
-      return;
-    }
-
-    Toast.show({
-      type: "success",
-      text1: "Signed out",
-      text2: "User signed out successfully",
-      text1Style: { color: "green" },
-      position: "top",
-      visibilityTime: 1500,
-    });
-
-    setTimeout(() => {
-      router.replace("/login");
-    }, 1500)
+  if (loading || translating) {
+    return (
+      <View className="flex-1 justify-center items-center space-y-3">
+        <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit text-neutral-300">
+          {translated.loadingMessage}
+        </Text>
+      </View>
+    );
   }
-
-  if (loading) 
-    return (<View className="flex-1 items-center justify-center bg-white">
-              <ActivityIndicator size="large" color="#602c66" />
-            </View>
-        );
 
   return (
     <>

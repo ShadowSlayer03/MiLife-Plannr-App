@@ -1,6 +1,6 @@
-import React from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Redirect } from "expo-router";
+import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
@@ -15,8 +15,8 @@ export default function Index() {
   }
 
   if (session) {
-    return <Redirect href="/home" />;
+    return <Redirect href="/budget-setup/instructions" />;
   }
 
-  return <Redirect href="/signup" />;
+  return <Redirect href="/language" />;
 }
