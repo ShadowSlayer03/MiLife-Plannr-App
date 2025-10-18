@@ -84,7 +84,7 @@ export default function Home() {
     return (
       <View className="flex-1 justify-center items-center space-y-3">
         <ActivityIndicator size="large" color="#602c66" />
-        <Text className="text-lg font-kanit text-neutral-300">
+        <Text className="text-lg font-kanit">
           {translated.loadingMessage}
         </Text>
       </View>

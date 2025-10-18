@@ -7,6 +7,8 @@ import Toast from "react-native-toast-message";
 import { User } from "@supabase/supabase-js";
 import Constants from 'expo-constants';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
+import { UserMenuContent } from "@/constants/Content";
 
 interface UserMenuProps {
   user: User | null;
@@ -25,6 +27,8 @@ export default function UserMenu({ user }: UserMenuProps) {
     Alert.alert("Admin Email not set!");
     console.error("ADMIN_EMAIL env variable not found.")
   }
+
+  const { translated, translating } = useTranslatePage(UserMenuContent);
 
   const handleCreateNewProductClick = () => {
     closeMenu();
@@ -53,7 +57,7 @@ export default function UserMenu({ user }: UserMenuProps) {
     if (error) {
       Toast.show({
         type: "error",
-        text1: "Signout failed",
+        text1: translated.signoutFailedText,
         text2: error.message || "Error: User signout failed",
         text1Style: { color: "red" },
         position: "top",
@@ -64,8 +68,8 @@ export default function UserMenu({ user }: UserMenuProps) {
 
     Toast.show({
       type: "success",
-      text1: "Signed out",
-      text2: "User signed out successfully",
+      text1: translated.signoutSuccessfulTitleText,
+      text2: translated.signoutSuccessfulDescText,
       text1Style: { color: "green" },
       position: "top",
       visibilityTime: 1500,
@@ -93,29 +97,29 @@ export default function UserMenu({ user }: UserMenuProps) {
     >
       <Menu.Item
         onPress={handleMyPlansClick}
-        title="My Plans"
+        title={translated.myPlansText}
         titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
       />
       <Menu.Item
         onPress={handleProfileClick}
-        title="Profile"
+        title={translated.profileText}
         titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
       />
       {user?.email === adminEmail && (
         <Menu.Item
           onPress={handleCreateNewProductClick}
-          title="Add Product"
+          title={translated.addProductText}
           titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
         />
       )}
       <Menu.Item
         onPress={handleLangChange}
-        title="Change Language"
+        title={translated.handleLangText}
         titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
       />
       <Menu.Item
         onPress={handleSignOutClick}
-        title="Sign Out"
+        title={translated.signOutText}
         titleStyle={{ fontFamily: "bricolage-bold", fontSize: 16 }}
       />
     </Menu>

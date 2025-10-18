@@ -155,6 +155,28 @@ export const BudgetSetupPageContent = {
     setBudgetForType: "Set Budget for {type} products",
 };
 
+// Component Content
 
+export const NamePromptContent = {
+    title: "Enter Plan Name",
+    planNamePlaceholder: "My Monthly Plan",
+    cancelButtonText: "Cancel",
+    saveButtonText: "Save",
+}
 
+export const UserMenuContent = {
+    signoutFailedText: "Signout failed",
+    signoutSuccessfulTitleText: "Signed out",
+    signoutSuccessfulDescText: "User signed out successfully",
+    myPlansText: "My Plans",
+    profileText: "Profile",
+    addProductText: "Add Product",
+    handleLangText: "Change Language",
+    signOutText: "Sign Out"
+}
+
+export const ExportButtonContent = {
+    title: "Download as {format}",
+    buttonLoadingText: "Loading button" 
+}
 

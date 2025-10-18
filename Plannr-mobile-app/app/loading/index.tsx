@@ -14,15 +14,9 @@ const LoadingPage: React.FC = () => {
   const { setList75BV, setList35BV, setBudget, setAdjustment } = useGeneratedList();
   const { translated, translating } = useTranslatePage(LoadingPageContent);
 
-  if (translating) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#602c66" />
-      </View>
-    );
-  }
-
   useEffect(() => {
+    if (translating) return;
+
     const generateList = async () => {
       try {
         const type = params.type as "75BV" | "35BV";
@@ -58,7 +52,15 @@ const LoadingPage: React.FC = () => {
     };
 
     generateList();
-  }, []);
+  }, [translating]);
+
+  if (translating) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#602c66" />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 justify-center items-center bg-mi-purple">
@@ -69,5 +71,6 @@ const LoadingPage: React.FC = () => {
     </View>
   );
 };
+
 
 export default LoadingPage;

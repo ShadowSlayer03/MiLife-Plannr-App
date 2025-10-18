@@ -109,7 +109,7 @@ export default function GeneratedListPage() {
     return (
       <View className="flex-1 justify-center items-center space-y-3">
         <ActivityIndicator size="large" color="#602c66" />
-        <Text className="text-lg font-kanit text-neutral-300">
+        <Text className="text-lg font-kanit">
           {translated.loadingMessage}
         </Text>
       </View>
@@ -201,7 +201,7 @@ export default function GeneratedListPage() {
       {/* Buttons */}
       <View className="flex-row justify-between mt-6">
         <TouchableOpacity
-          className="flex-1 bg-gray-300 py-3 rounded-full mr-2 shadow-md active:opacity-70"
+          className="flex-1 justify-center bg-gray-300 py-3 rounded-full mr-2 shadow-md active:opacity-70"
           onPress={handleGenerateAgain}
         >
           <Text className="text-center text-gray-800 font-bricolage-semibold text-lg">
@@ -210,7 +210,7 @@ export default function GeneratedListPage() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-1 bg-mi-purple py-3 rounded-full ml-2 shadow-md active:opacity-70"
+          className="flex-1 justify-center bg-mi-purple py-3 rounded-full ml-2 shadow-md active:opacity-70"
           onPress={handleNextPress}
           disabled={isPending}
         >

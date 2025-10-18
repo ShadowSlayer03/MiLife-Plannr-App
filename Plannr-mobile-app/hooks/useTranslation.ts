@@ -11,7 +11,6 @@ export const useTranslation = () => {
 
   if (!supabaseEdgeUrl || !supabaseKey) {
     Alert.alert("Edge URL or Anon Key not set!");
-    throw new Error("SUPABASE_EDGE_URL or SUPABASE_KEY is missing");
   }
 
   const t = useCallback(

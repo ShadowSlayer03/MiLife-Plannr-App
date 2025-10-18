@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useEffect, useState } from "react";
 
 type NestedStringObject = {
   [key: string]: string | NestedStringObject | NestedStringObject[];

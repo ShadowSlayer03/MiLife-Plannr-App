@@ -1,10 +1,12 @@
 import { brands35BV, brands75BV } from "@/constants/Brands";
+import { ExportButtonContent } from "@/constants/Content";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { Plan } from "@/types/Plan";
 import { Product } from "@/types/Product";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import React from "react";
-import { Platform, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from "react-native";
 import * as XLSX from "xlsx";
 
 type ExportButtonProps = {
@@ -13,6 +15,8 @@ type ExportButtonProps = {
 };
 
 const ExportButton: React.FC<ExportButtonProps> = ({ plan, format }) => {
+
+    const { translating, translated } = useTranslatePage(ExportButtonContent);
 
     const list75BV = plan.products.filter(p => brands75BV.includes(p.subbrand));
     const list35BV = plan.products.filter(p => brands35BV.includes(p.subbrand));
@@ -127,13 +131,26 @@ const ExportButton: React.FC<ExportButtonProps> = ({ plan, format }) => {
         }
     };
 
+    const formattedTitle = (translated.title || "").replace(/\{.*?\}/, format === "excel" ? "Excel" : "Word");
+
+    if (translating) {
+        return (
+            <View className="flex-1 justify-center items-center space-y-5">
+                <ActivityIndicator size="large" color="bg-mi-purple" />
+                <Text className="text-lg font-kanit">
+                    {translated.buttonLoadingText}
+                </Text>
+            </View>
+        );
+    }
+
     return (
         <TouchableOpacity
             onPress={exportPlan}
             className={`${format === "excel" ? "bg-excel-green" : "bg-word-purple"} py-3 px-5 rounded-xl shadow-md mt-2`}
         >
             <Text className="text-white text-base font-bricolage-semibold text-center">
-                Export to {format === "excel" ? "Excel" : "Word"}
+                {formattedTitle}
             </Text>
         </TouchableOpacity>
     );

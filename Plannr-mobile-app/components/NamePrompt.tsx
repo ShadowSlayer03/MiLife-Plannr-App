@@ -1,3 +1,5 @@
+import { NamePromptContent } from "@/constants/Content";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import React, { useState } from "react";
 import {
   Modal,
@@ -15,6 +17,7 @@ type NamePromptProps = {
 
 const NamePrompt = ({ visible, onClose, onSubmit }: NamePromptProps) => {
   const [planName, setPlanName] = useState("");
+  const { translated, translating } = useTranslatePage(NamePromptContent)
 
   return (
     <Modal
@@ -26,13 +29,13 @@ const NamePrompt = ({ visible, onClose, onSubmit }: NamePromptProps) => {
       <View className="flex-1 bg-black/50 justify-center items-center px-6">
         <View className="bg-white w-full rounded-2xl p-6 shadow-lg">
           <Text className="text-lg font-bricolage-semibold mb-4 text-gray-800 text-center">
-            Enter Plan Name
+            {translated.title}
           </Text>
 
           <TextInput
             value={planName}
             onChangeText={setPlanName}
-            placeholder="My Monthly Plan"
+            placeholder={translated.planNamePlaceholder}
             className="border border-gray-300 rounded-full px-3 py-2 mb-6 text-gray-800 font-kanit"
           />
 
@@ -42,7 +45,7 @@ const NamePrompt = ({ visible, onClose, onSubmit }: NamePromptProps) => {
               onPress={onClose}
             >
               <Text className="text-gray-800 font-bricolage-semibold text-base">
-                Cancel
+                {translated.cancelButtonText}
               </Text>
             </TouchableOpacity>
 
@@ -55,7 +58,7 @@ const NamePrompt = ({ visible, onClose, onSubmit }: NamePromptProps) => {
               }}
             >
               <Text className="text-white font-bricolage-semibold text-base">
-                Save
+                {translated.saveButtonText}
               </Text>
             </TouchableOpacity>
           </View>
