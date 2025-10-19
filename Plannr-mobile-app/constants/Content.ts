@@ -106,7 +106,7 @@ export const HomePageContent = {
 export const GeneratedListPageContent = {
     pageTitle: "Generated List",
     totalPriceLabel: "Total Price",
-    totalBVLabel: "Total BV",
+    totalBVLabel: "Total {BV}",
     listEmptyText: "No items generated yet.",
     generateAgain: "Generate Again",
     continueText: "Continue",
@@ -119,7 +119,8 @@ export const GeneratedListPageContent = {
     removeDescription: "Are you sure you want to remove this item from the list?",
     removeText: "Remove",
     saveErrorTitle: "Failed to save plan",
-    loadingMessage: "Loading..."
+    loadingMessage: "Loading...",
+    errorTitleText: "Error fetching products"
 };
 
 export const InstructionsPageContent = {

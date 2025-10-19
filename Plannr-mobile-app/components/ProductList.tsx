@@ -49,16 +49,6 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
     })),
   ]);
 
-  useEffect(() => {
-    if (!translating) {
-      setSortItems([
-        { label: translated.sortOptions.nameAsc, value: "nameAsc" },
-        { label: translated.sortOptions.priceAsc, value: "priceAsc" },
-        { label: translated.sortOptions.priceDesc, value: "priceDesc" },
-      ]);
-    }
-  }, [translating, translated]);
-
   const {
     data: products = [],
     isLoading,
@@ -96,6 +86,16 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
       if (sortValue === "nameAsc") return a.name.localeCompare(b.name);
       return 0;
     });
+
+  useEffect(() => {
+    if (!translating) {
+      setSortItems([
+        { label: translated.sortOptions.nameAsc, value: "nameAsc" },
+        { label: translated.sortOptions.priceAsc, value: "priceAsc" },
+        { label: translated.sortOptions.priceDesc, value: "priceDesc" },
+      ]);
+    }
+  }, [translating, translated]);
 
   return (
     <View className="flex-1">

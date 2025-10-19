@@ -5,10 +5,9 @@ import UserMenu from "@/components/UserMenu";
 import { HomePageContent } from "@/constants/Content";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslatePage } from "@/hooks/useTranslatePage";
-import { supabase } from "@/lib/supabase";
 import { Product } from "@/types/Product";
 import { User } from "@supabase/supabase-js";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,11 +26,6 @@ export default function Home() {
   const budgetNum = parseInt(budgetStr || "0", 10);
   const adjustmentNum = parseInt(adjustmentStr || "0", 10);
 
-  const total = useMemo(
-    () => selected.reduce((sum, p) => sum + p.price * (p.quantity || 1), 0),
-    [selected]
-  );
-
   const { translated, translating } = useTranslatePage(HomePageContent);
 
   useEffect(() => {
@@ -39,6 +33,11 @@ export default function Home() {
       setUser(session.user);
     }
   }, [session]);
+
+  const total = useMemo(
+    () => selected.reduce((sum, p) => sum + p.price * (p.quantity || 1), 0),
+    [selected]
+  );
 
   const handleAdd = (product: Product) => {
     const existing = selected.find((p) => p.id === product.id);

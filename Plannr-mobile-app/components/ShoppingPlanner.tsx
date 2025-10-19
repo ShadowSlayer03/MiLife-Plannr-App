@@ -3,7 +3,6 @@ import { useGeneratedList } from "@/hooks/useGeneratedList";
 import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { fetchProducts } from "@/lib/queries";
 import { Product } from "@/types/Product";
-import { createAndStoreList } from "@/utils/createAndStoreList";
 import { truncateText } from "@/utils/truncateText";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -27,29 +26,7 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
   const router = useRouter();
   const total = selected.reduce((acc, p) => acc + p.price * (p.quantity || 1), 0);
   const maxBudget = budget + adjustment;
-  const { setList75BV, setList35BV } = useGeneratedList();
   const { translated, translating } = useTranslatePage(ShoppingPlannerContent);
-
-  const {
-    data: products = [],
-    isError,
-    error,
-  } = useQuery<Product[], Error>({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
-    staleTime: 1000 * 60 * 5,
-    retry: 2,
-  });
-
-  if (isError) {
-    Toast.show({
-      type: "error",
-      text1: translated.errorTitleText,
-      text2: error.message,
-      position: "bottom",
-      visibilityTime: 2000,
-    });
-  }
 
   if (translating) {
     return (
