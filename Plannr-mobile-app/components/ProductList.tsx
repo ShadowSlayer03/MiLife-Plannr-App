@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  FlatList,
-  Text,
-  ActivityIndicator,
-} from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
+import { brands35BV, brands75BV } from "@/constants/Brands";
+import { ProductListContent } from "@/constants/Content";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
+import { fetchProducts } from "@/lib/queries";
+import { Product } from "@/types/Product";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import Toast from "react-native-toast-message";
 import ProductItem from "./ProductItem";
-import { fetchProducts } from "@/lib/queries";
-import { brands35BV, brands75BV } from "@/constants/Brands";
-import { Product } from "@/types/Product";
 
 type ProductListProps = {
   onAdd: (product: Product) => void;
@@ -23,22 +25,39 @@ type ProductListProps = {
 };
 
 const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type }) => {
+  const { translated, translating } = useTranslatePage(ProductListContent);
+
   const [search, setSearch] = useState("");
   const [sortOpen, setSortOpen] = useState(false);
   const [sortValue, setSortValue] = useState<string>("none");
   const [sortItems, setSortItems] = useState([
-    { label: "Name (A-Z)", value: "nameAsc" },
-    { label: "Price (Low → High)", value: "priceAsc" },
-    { label: "Price (High → Low)", value: "priceDesc" },
+    { label: translated.sortOptions.nameAsc, value: "nameAsc" },
+    { label: translated.sortOptions.priceAsc, value: "priceAsc" },
+    { label: translated.sortOptions.priceDesc, value: "priceDesc" },
   ]);
 
   const reqBrandArray = type === "75BV" ? brands75BV : brands35BV;
 
   const [brandOpen, setBrandOpen] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string>("All");
-  const [brandItems, setBrandItems] = useState(
-    reqBrandArray.map((b) => ({ label: b, value: b }))
-  );
+
+  const [brandItems, setBrandItems] = useState([
+    { label: translated.allBrandsLabelText, value: "All" },
+    ...reqBrandArray.map((b) => ({
+      label: b,
+      value: b,
+    })),
+  ]);
+
+  useEffect(() => {
+    if (!translating) {
+      setSortItems([
+        { label: translated.sortOptions.nameAsc, value: "nameAsc" },
+        { label: translated.sortOptions.priceAsc, value: "priceAsc" },
+        { label: translated.sortOptions.priceDesc, value: "priceDesc" },
+      ]);
+    }
+  }, [translating, translated]);
 
   const {
     data: products = [],
@@ -55,7 +74,7 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
   if (isError) {
     Toast.show({
       type: "error",
-      text1: "Error",
+      text1: translated.errorText,
       text2: error.message,
       position: "bottom",
       visibilityTime: 1500,
@@ -84,12 +103,13 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
       <TextInput
         value={search}
         onChangeText={setSearch}
-        placeholder="Search products..."
+        placeholder={translated.searchProductsPlaceholderText}
         className="bg-white border-2 border-gray-200 focus:border-mi-purple rounded-full px-4 py-3 mb-4 shadow-md text-gray-800 font-kanit"
         autoCapitalize="none"
         placeholderTextColor="#aaa"
       />
 
+      {/* Sorting + Brand Filters */}
       <View className="flex-row justify-between mb-8 z-20">
         {/* Sort Dropdown */}
         <View style={{ flex: 1, marginRight: 6, zIndex: 2000 }}>
@@ -100,7 +120,7 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
             setOpen={setSortOpen}
             setValue={setSortValue}
             setItems={setSortItems}
-            placeholder="Sort"
+            placeholder={translated.sortPlaceholderText}
             ArrowDownIconComponent={() => (
               <MaterialIcons name="keyboard-arrow-down" size={20} color="#fff" />
             )}
@@ -136,7 +156,7 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
             setOpen={setBrandOpen}
             setValue={setSelectedBrand}
             setItems={setBrandItems}
-            placeholder="Brand"
+            placeholder={translated.brandPlaceholderText}
             ArrowDownIconComponent={() => (
               <MaterialIcons name="keyboard-arrow-down" size={20} color="#fff" />
             )}
@@ -149,7 +169,6 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
             style={{
               borderRadius: 8,
               borderColor: "#ccc",
-              // height: 40,
               backgroundColor: "#602c66",
             }}
             textStyle={{ fontSize: 13, color: "#fff", fontFamily: "kanit" }}
@@ -166,7 +185,12 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
 
       {/* Product List */}
       {isLoading ? (
-        <ActivityIndicator size="large" color="#602c66" />
+        <View className="flex-1 justify-center items-center space-y-3">
+          <ActivityIndicator size="large" color="#602c66" />
+          <Text className="text-mi-purple text-lg font-kanit text-center">
+            {translated.loadingMessage}
+          </Text>
+        </View>
       ) : (
         <FlatList
           data={filteredProducts}
@@ -182,7 +206,11 @@ const ProductList: React.FC<ProductListProps> = ({ onAdd, onSub, selected, type 
               isSelected={selected.some((p) => p.id === item.id)}
             />
           )}
-          ListEmptyComponent={<Text className="font-kanit">No Products Found</Text>}
+          ListEmptyComponent={
+            <Text className="font-kanit text-center mt-8 text-gray-500">
+              {translated.listEmptyText}
+            </Text>
+          }
         />
       )}
     </View>

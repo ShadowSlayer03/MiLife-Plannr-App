@@ -4,7 +4,11 @@ export const LoginPageContent = {
     emailPlaceholder: "Email",
     passwordPlaceholder: "Password",
     loginButtonText: "Login",
-    signUpButtonText: "Signup"
+    signUpButtonText: "Signup",
+    loadingMessage: "Loading page. Please wait.",
+    errorText: "Error",
+    errorDesc: "Email and password are required",
+    successText: "User logged in successfully!"
 }
 
 export const SignupPageContent = {
@@ -13,7 +17,12 @@ export const SignupPageContent = {
     passwordPlaceholder: "Password",
     confirmPasswordPlaceholder: "Confirm Password",
     loginButtonText: "Login",
-    signUpButtonText: "Signup"
+    signUpButtonText: "Signup",
+    loadingMessage: "Loading page. Please wait.",
+    errorText: "Error",
+    allFieldsAreRequiredText: "All fields are required!",
+    successText: "Success",
+    successDesc: "Redirecting to login..."
 }
 
 export const LoadingPageContent = {
@@ -155,7 +164,7 @@ export const BudgetSetupPageContent = {
     setBudgetForType: "Set Budget for {type} products",
 };
 
-// Component Content
+/* Component Content */
 
 export const NamePromptContent = {
     title: "Enter Plan Name",
@@ -177,6 +186,38 @@ export const UserMenuContent = {
 
 export const ExportButtonContent = {
     title: "Download as {format}",
-    buttonLoadingText: "Loading button" 
+    buttonLoadingText: "Loading button"
 }
 
+export const ProductListContent = {
+    searchProductsPlaceholderText: "Search products...",
+    listEmptyText: "No products found.",
+    loadingMessage: "Loading products...",
+    errorText: "Error loading products",
+    allBrandsLabelText: "All",
+    brandLabels: {
+        "Elements": "Elements",
+        "On and On": "On and On",
+        "IndiAgro": "IndiAgro",
+        "Neustar": "Neustar",
+        "Mi Home": "Mi Home",
+        "Aahar": "Aahar"
+    },
+    sortPlaceholderText: "Sort",
+    brandPlaceholderText: "Brand",
+    sortOptions: {
+        nameAsc: "Name (A-Z)",
+        priceAsc: "Price (Low → High)",
+        priceDesc: "Price (High → Low)",
+    },
+};
+
+
+export const ShoppingPlannerContent = {
+    errorTitleText: "Error",
+    loadingMessage: "Translating...",
+    budgetText: "Budget",
+    listEmptyText: "No items added yet",
+    totalText: "Total",
+    generateListText: "Generate List"
+}

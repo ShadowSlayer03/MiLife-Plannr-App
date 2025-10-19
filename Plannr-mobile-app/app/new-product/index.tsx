@@ -18,14 +18,6 @@ const NewProduct = () => {
 
   const router = useRouter();
 
-  if (translating) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#9333EA" />
-      </View>
-    );
-  }
-
   useEffect(() => {
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -101,6 +93,14 @@ const NewProduct = () => {
       }, 1500);
     }
   };
+
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#9333EA" />
+      </View>
+    );
+  }
 
   if (!isAdmin) {
     return (

@@ -50,8 +50,8 @@ export default function SignUp() {
     if (!email || !password || !confirmPassword) {
       Toast.show({
         type: "error",
-        text1: "Error",
-        text2: "All fields are required!",
+        text1: translated.errorText,
+        text2: translated.allFieldsAreRequiredText,
         position: "top",
         visibilityTime: 1500,
       });
@@ -61,7 +61,7 @@ export default function SignUp() {
     if (passwordError || confirmError) {
       Toast.show({
         type: "error",
-        text1: "Error",
+        text1: translated.errorText,
         text2: passwordError || confirmError,
         position: "top",
         visibilityTime: 1500,
@@ -84,8 +84,8 @@ export default function SignUp() {
 
       Toast.show({
         type: "success",
-        text1: "Success",
-        text2: "Redirecting to login...",
+        text1: translated.successText,
+        text2: translated.successDesc,
         position: "top",
         visibilityTime: 1500,
       });
@@ -94,7 +94,7 @@ export default function SignUp() {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Error",
+        text1: translated.errorText,
         text2: error.message,
         position: "top",
         visibilityTime: 1500,
@@ -105,6 +105,17 @@ export default function SignUp() {
   };
 
   const handleLoginClick = () => router.push("/login");
+
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center space-y-3">
+        <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit text-black">
+          {translated.loadingMessage}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 justify-center px-8 bg-white">

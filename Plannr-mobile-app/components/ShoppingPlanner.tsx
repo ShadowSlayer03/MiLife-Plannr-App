@@ -1,4 +1,6 @@
+import { ShoppingPlannerContent } from "@/constants/Content";
 import { useGeneratedList } from "@/hooks/useGeneratedList";
+import { useTranslatePage } from "@/hooks/useTranslatePage";
 import { fetchProducts } from "@/lib/queries";
 import { Product } from "@/types/Product";
 import { createAndStoreList } from "@/utils/createAndStoreList";
@@ -6,7 +8,7 @@ import { truncateText } from "@/utils/truncateText";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 interface ShoppingPlanner {
@@ -25,8 +27,8 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
   const router = useRouter();
   const total = selected.reduce((acc, p) => acc + p.price * (p.quantity || 1), 0);
   const maxBudget = budget + adjustment;
-  const { setList75BV, setList35BV, setBudget, setAdjustment } = useGeneratedList();
-  const setList = (type === "75BV") ? setList75BV : setList35BV;
+  const { setList75BV, setList35BV } = useGeneratedList();
+  const { translated, translating } = useTranslatePage(ShoppingPlannerContent);
 
   const {
     data: products = [],
@@ -42,33 +44,29 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
   if (isError) {
     Toast.show({
       type: "error",
-      text1: "Error",
+      text1: translated.errorTitleText,
       text2: error.message,
       position: "bottom",
       visibilityTime: 2000,
     });
   }
 
-  const handleGenerateListClick = () => {
-    createAndStoreList({ products, selected, budget, adjustment, type, setList, setBudget, setAdjustment });
-
-    router.push({
-      pathname: "/generated-list/[type]",
-      params: {
-        type: type,
-        bgt: String(budget),
-        adj: String(adjustment),
-      },
-    });
-  };
-
-
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center space-y-3">
+        <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit text-black">
+          {translated.loadingMessage}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View className="bg-mi-purple rounded-t-2xl shadow-lg p-4 mt-3">
       {/* Budget Info */}
       <View className="flex-row justify-between mb-3">
-        <Text className="text-white font-bricolage-semibold">Budget</Text>
+        <Text className="text-white font-bricolage-semibold">{translated.budgetText}</Text>
         <Text className="text-white font-bricolage-semibold">
           ₹{budget} (+₹{adjustment})
         </Text>
@@ -90,7 +88,7 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
           )}
           ListEmptyComponent={
             <Text className="text-center text-gray-400 py-4 font-kanit">
-              No items added yet
+              {translated.listEmptyText}
             </Text>
           }
         />
@@ -99,7 +97,7 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
       {/* Total Section */}
       <View className="mt-4 bg-gray-100 rounded-xl px-4 py-3">
         <View className="flex-row justify-between">
-          <Text className="text-lg font-semibold text-gray-700 font-bricolage-bold">Total</Text>
+          <Text className="text-lg font-semibold text-gray-700 font-bricolage-bold">{translated.totalText}</Text>
           <Text
             className={`text-lg font-bricolage-bold text-green-600`}
           >
@@ -132,7 +130,7 @@ const ShoppingPlanner: React.FC<ShoppingPlanner> = ({
           }}
         >
           <Text className="text-white text-center font-kanit font-semibold text-[15px]">
-            Generate List
+            {translated.generateListText}
           </Text>
         </TouchableOpacity>
       </View>

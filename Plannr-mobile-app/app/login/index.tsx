@@ -20,8 +20,8 @@ function Login() {
     if (!email || !password) {
       Toast.show({
         type: "error",
-        text1: "Error",
-        text2: "Email and password are required",
+        text1: translated.errorText,
+        text2: translated.errorDesc,
         position: "top",
         visibilityTime: 1500,
       });
@@ -45,7 +45,7 @@ function Login() {
 
     Toast.show({
       type: "success",
-      text1: "User logged in successfully!",
+      text1: translated.successText,
       position: "top",
       visibilityTime: 1500,
     });
@@ -55,6 +55,17 @@ function Login() {
   };
 
   const handleSignUpClick = () => router.push("/signup");
+
+  if (translating) {
+    return (
+      <View className="flex-1 justify-center items-center space-y-3">
+        <ActivityIndicator size="large" color="#602c66" />
+        <Text className="text-lg font-kanit text-black">
+          {translated.loadingMessage}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 justify-center px-8 bg-white">
